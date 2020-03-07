@@ -15,6 +15,8 @@
  */
 package com.example.android.pets;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import androidx.core.app.NavUtils;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +28,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
+
 import com.example.android.pets.data.PetsContract.PetsEntry;
+import com.example.android.pets.data.PetsDbHelper;
+
 /**
  * Allows user to create a new pet or edit an existing one.
  */
@@ -117,7 +123,10 @@ public class EditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Do nothing for now
+                // Save pet to database
+                insertPet();
+                // Exit activity
+                finish();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
@@ -131,4 +140,33 @@ public class EditorActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    // putting user input into the db
+    private void insertPet() {
+        // get text from from input fields
+        String nameString = mNameEditText.getText().toString().trim();
+        String breedString = mBreedEditText.getText().toString().trim();
+        int weight = Integer.parseInt(mWeightEditText.getText().toString().trim());
+
+        PetsDbHelper mDbHelper = new PetsDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PetsEntry.COLUMN_NAME, nameString);
+        values.put(PetsEntry.COLUMN_BREED, breedString);
+        values.put(PetsEntry.COLUMN_GENDER, mGender);
+        values.put(PetsEntry.COLUMN_WEIGHT, weight);
+
+        long newRowId = db.insert(PetsEntry.TABLE_NAME, null, values);
+
+        // showing toast message
+        if (newRowId == -1) {
+            // error case
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+        } else {
+            // best case
+            Toast.makeText(this, "Pet saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
