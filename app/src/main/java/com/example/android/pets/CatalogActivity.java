@@ -101,21 +101,24 @@ public class CatalogActivity extends AppCompatActivity {
             // the information from each column in this order.
             displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
             displayView.append(PetsContract.PetsEntry._ID + " - " +
-                    PetsContract.PetsEntry.COLUMN_NAME + "\n");
+                    PetsContract.PetsEntry.COLUMN_NAME + " - " +
+                    PetsContract.PetsEntry.COLUMN_BREED + " - " +
+                    PetsContract.PetsEntry.COLUMN_GENDER + " - " +
+                    PetsContract.PetsEntry.COLUMN_WEIGHT
+                    + "\n");
 
-            // Figure out the index of each column
-            int idColumnIndex = cursor.getColumnIndex(PetsContract.PetsEntry._ID);
-            int nameColumnIndex = cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_NAME);
+//            // Figure out the index of each column (REFACTOR IDEA)
+//            int idColumnIndex = cursor.getColumnIndex(PetsContract.PetsEntry._ID);
+//            int nameColumnIndex = cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_NAME);
 
             // Iterate through all the returned rows in the cursor
             while (cursor.moveToNext()) {
-                // Use that index to extract the String or Int value of the word
-                // at the current row the cursor is on.
+
                 displayView.append("\n" +
-                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry._ID)) + "\t" +
-                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_NAME)) + "\t" +
-                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_BREED)) + "\t" +
-                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_GENDER)) + "\t" +
+                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry._ID)) + " - " +
+                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_NAME)) + " - " +
+                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_BREED)) + " - " +
+                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_GENDER)) + " - " +
                         cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_WEIGHT))
                 );
             }
