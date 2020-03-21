@@ -30,6 +30,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import static com.example.android.pets.data.PetsContract.CONTENT_URI;
+
 /**
  * Displays list of pets that were entered and stored in the app.
  */
@@ -80,6 +82,13 @@ public class CatalogActivity extends AppCompatActivity {
                 PetsContract.PetsEntry.COLUMN_GENDER,
                 PetsContract.PetsEntry.COLUMN_WEIGHT
         };
+
+        Cursor cursor = getContentResolver().query(CONTENT_URI, projection, null, null, null);
+
+
+
+
+/*      (BAD_PRACTISE)
         Cursor cursor = db.query(
                 PetsContract.PetsEntry.TABLE_NAME,
                 projection,
@@ -88,6 +97,7 @@ public class CatalogActivity extends AppCompatActivity {
                 null,
                 null,
                 null);
+*/
 
         TextView displayView = (TextView) findViewById(R.id.text_view_pet);
 
