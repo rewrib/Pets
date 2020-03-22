@@ -19,10 +19,12 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.android.pets.data.PetsContract;
 import com.example.android.pets.data.PetsDbHelper;
+import com.example.android.pets.data.PetsProvider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
@@ -38,6 +40,7 @@ import static com.example.android.pets.data.PetsContract.CONTENT_URI;
 public class CatalogActivity extends AppCompatActivity {
 
     private PetsDbHelper mDbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,13 +145,14 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void insertPet() {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(PetsContract.PetsEntry.COLUMN_NAME, "Toto");
-        values.put(PetsContract.PetsEntry.COLUMN_BREED, "Terrier");
-        values.put(PetsContract.PetsEntry.COLUMN_GENDER, PetsContract.PetsEntry.GENDER_MALE);
-        values.put(PetsContract.PetsEntry.COLUMN_WEIGHT, 7);
+        ContentValues dummyValues = new ContentValues();
+        dummyValues.put(PetsContract.PetsEntry.COLUMN_NAME, "Toto");
+        dummyValues.put(PetsContract.PetsEntry.COLUMN_BREED, "Terrier");
+        dummyValues.put(PetsContract.PetsEntry.COLUMN_GENDER, PetsContract.PetsEntry.GENDER_MALE);
+        dummyValues.put(PetsContract.PetsEntry.COLUMN_WEIGHT, 7);
+        Uri newUri = getContentResolver().insert(PetsContract.CONTENT_URI, dummyValues);
 
-        long newRowID = db.insert(PetsContract.PetsEntry.TABLE_NAME, null, values);
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
