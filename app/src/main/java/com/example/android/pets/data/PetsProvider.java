@@ -23,6 +23,7 @@ public class PetsProvider extends ContentProvider {
     private static final int PETS = 100;
     private static final int PET_ID = 101;
 
+
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -108,6 +109,25 @@ public class PetsProvider extends ContentProvider {
      */
     private Uri insertPet(Uri uri, ContentValues values) {
 
+        String name = values.getAsString(PetsEntry.COLUMN_NAME);
+        if (name == null) {
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+
+        // Check that the gender is valid
+        Integer gender = values.getAsInteger(PetsEntry.COLUMN_GENDER);
+        if (gender == null || !PetsEntry.isValidGender(gender)) {
+            throw new IllegalArgumentException("Pet requires valid gender");
+        }
+
+        // If the weight is provided, check that it's greater than or equal to 0 kg
+        Integer weight = values.getAsInteger(PetsEntry.COLUMN_WEIGHT);
+        if (weight != null && weight < 0) {
+            throw new IllegalArgumentException("Pet requires valid weight");
+        }
+
+
+
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         long id = db.insert(PetsEntry.TABLE_NAME, null, values);
 
@@ -143,4 +163,5 @@ public class PetsProvider extends ContentProvider {
     public String getType(Uri uri) {
         return null;
     }
+
 }
