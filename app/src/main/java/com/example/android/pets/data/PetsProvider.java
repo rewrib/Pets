@@ -144,8 +144,58 @@ public class PetsProvider extends ContentProvider {
      * Updates the data at the given selection and selection arguments, with the new ContentValues.
      */
     @Override
-    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
-        return 0;
+    public int update(Uri uri, ContentValues contentValues, String selection,
+                      String[] selectionArgs) {
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case PETS:
+                return updatePet(uri, contentValues, selection, selectionArgs);
+            case PET_ID:
+                // For the PET_ID code, extract out the ID from the URI,
+                // so we know which row to update. Selection will be "_id=?" and selection
+                // arguments will be a String array containing the actual ID.
+                selection = PetsEntry._ID + "=?";
+                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                return updatePet(uri, contentValues, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update is not supported for " + uri);
+        }
+    }
+
+    /**
+     * Update pets in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more pets).
+     * Return the number of rows that were successfully updated.
+     */
+    private int updatePet(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+
+        if (values.containsKey(PetsEntry.COLUMN_NAME)) {
+            String name = values.getAsString(PetsEntry.COLUMN_NAME);
+            if (name == null) {
+                throw new IllegalArgumentException("Valid name needed");
+            }
+        }
+
+        if (values.containsKey(PetsEntry.COLUMN_GENDER)) {
+            Integer gender = values.getAsInteger(PetsEntry.COLUMN_GENDER);
+            if (gender == null || !PetsEntry.isValidGender(gender)) {
+                throw new IllegalArgumentException("Valid gender needed");
+            }
+        }
+
+        if (values.containsKey(PetsEntry.COLUMN_WEIGHT)) {
+            Integer weight = values.getAsInteger(PetsEntry.COLUMN_WEIGHT);
+            if (weight != null && weight < 0) {
+                throw new IllegalArgumentException("Valid weight needed");
+            }
+        }
+        if (values.size() == 0) {
+            return 0;
+        }
+
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        return database.update(PetsEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
     /**
