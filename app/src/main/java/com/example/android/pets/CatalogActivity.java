@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import static com.example.android.pets.data.PetsContract.CONTENT_URI;
@@ -102,44 +103,15 @@ public class CatalogActivity extends AppCompatActivity {
                 null);
 */
 
-        TextView displayView = (TextView) findViewById(R.id.text_view_pet);
+        ListView petListView = (ListView) findViewById(R.id.list);
 
-        try {
-            // Create a header in the Text View that looks like this:
-            //
-            // The pets table contains <number of rows in Cursor> pets.
-            // _id - name - breed - gender - weight
-            //
-            // In the while loop below, iterate through the rows of the cursor and display
-            // the information from each column in this order.
-            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
-            displayView.append(PetsContract.PetsEntry._ID + " - " +
-                    PetsContract.PetsEntry.COLUMN_NAME + " - " +
-                    PetsContract.PetsEntry.COLUMN_BREED + " - " +
-                    PetsContract.PetsEntry.COLUMN_GENDER + " - " +
-                    PetsContract.PetsEntry.COLUMN_WEIGHT
-                    + "\n");
+        // Setup an Adapter to create a list item for each row of pet data in the Cursor.
+        PetCursorAdapter adapter = new PetCursorAdapter(this, cursor);
+        // Attach the adapter to the ListView.
+        petListView.setAdapter(adapter);
+        cursor.close();
 
-//            // Figure out the index of each column (REFACTOR IDEA)
-//            int idColumnIndex = cursor.getColumnIndex(PetsContract.PetsEntry._ID);
-//            int nameColumnIndex = cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_NAME);
 
-            // Iterate through all the returned rows in the cursor
-            while (cursor.moveToNext()) {
-
-                displayView.append("\n" +
-                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry._ID)) + " - " +
-                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_NAME)) + " - " +
-                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_BREED)) + " - " +
-                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_GENDER)) + " - " +
-                        cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_WEIGHT))
-                );
-            }
-        } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        }
     }
 
 
